@@ -1,5 +1,7 @@
 package com.crypto.currency.scheduler.controller;
 
+import com.crypto.currency.data.entity.ExchangeEntity;
+import com.jsoniter.output.JsonStream;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -57,5 +60,19 @@ public class SystemController {
         } else {
             return new ResponseEntity<>(NOT_OK, HttpStatus.BAD_GATEWAY);
         }
+    }
+
+    public static void main(String[] args) {
+        ExchangeEntity entity = new ExchangeEntity();
+        entity.setExchangeId(270);
+        entity.setName("Binance");
+        entity.setSlug("binance");
+        entity.setHomepageUrl("https://www.binance.com/");
+        entity.setIsActive(true);
+        entity.setSpotsVolumeUsd(new BigDecimal("17439737358.59588"));
+        entity.setCoins(1);
+        entity.setMarkets(1);
+        String json = JsonStream.serialize(entity);
+        System.out.println(json);
     }
 }
