@@ -16,7 +16,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @Description Health check and shut down the system
  * @date 2022/4/26 16:49
  */
-@RestController @RequestMapping("/system") public class SystemController {
+@RestController
+@RequestMapping("/system")
+public class SystemController {
 
     private final ApplicationContext context;
 
@@ -30,7 +32,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
         this.context = context;
     }
 
-    @GetMapping("/shutdown") public ResponseEntity<String> shutdownApp() {
+    @GetMapping("/shutdown")
+    public ResponseEntity<String> shutdownApp() {
         HEALTH.set(false);
 
         new Thread(() -> {
