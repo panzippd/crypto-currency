@@ -24,6 +24,6 @@ public class ExchangeController {
 
     @GetMapping("/query")
     public Mono<List<ExchangeEntity>> getExchange() {
-        return exchangeRepository.findAll().collectList();
+        return exchangeRepository.findByIsActive(true).collectList();
     }
 }

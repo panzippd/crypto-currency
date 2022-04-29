@@ -15,6 +15,10 @@
             <groupId>com.crypto.currency</groupId>
             <artifactId>data</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.crypto.currency</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
