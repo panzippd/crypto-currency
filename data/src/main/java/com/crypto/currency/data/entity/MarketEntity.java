@@ -28,7 +28,8 @@ public class MarketEntity {
     private String mainSymbol;
     private String mainSymbolOverride;
     /**
-     * Spot,Perpetual,Future,Option
+     * DataType
+     * eg: Spot,Perpetual,Future,Option
      */
     private String category;
     private BigDecimal priceUsd;
