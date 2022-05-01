@@ -1,7 +1,7 @@
 package com.crypto.currency.scheduler.controller;
 
+import com.crypto.currency.common.utils.JacksonUtils;
 import com.crypto.currency.data.entity.ExchangeEntity;
-import com.jsoniter.output.JsonStream;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -72,7 +73,8 @@ public class SystemController {
         entity.setSpotsVolumeUsd(new BigDecimal("17439737358.59588"));
         entity.setCoins(1);
         entity.setMarkets(1);
-        String json = JsonStream.serialize(entity);
+        entity.setUpdateTime(new Date());
+        String json = JacksonUtils.toJson(entity);
         System.out.println(json);
     }
 }

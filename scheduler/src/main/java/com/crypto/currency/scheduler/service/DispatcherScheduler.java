@@ -37,10 +37,10 @@ public class DispatcherScheduler {
         }
         IScheduler scheduler = context.getBean(bean);
         //        SpringBeanUtils.getBean(bean);
-        List<BaseTaskEntity> tasks = (List<BaseTaskEntity>)scheduler.schedule(param);   //todo task父类没有赋值
+        List<BaseTaskEntity> tasks = (List<BaseTaskEntity>)scheduler.schedule(param);
         //        log.info("Try to schedule, topic: {}, task: {}", topic, new Gson().toJson(tasks));
         //        send(producer, buildMessages(tasks, topic)).subscribe();
-        log.info("Try to schedule, topic: {}, task: {}", topic, tasks.toString()); //todo JsonStream.serialize(tasks)报错
+        log.info("Try to schedule, topic: {}, task: {}", topic, tasks.toString());
 
     }
 }
