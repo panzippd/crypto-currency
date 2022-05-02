@@ -1,0 +1,84 @@
+package com.crypto.currency.scheduler.config;
+
+import com.crypto.currency.data.config.KafkaClusterConfig;
+import com.crypto.currency.data.config.KafkaCommonConfig;
+import com.crypto.currency.data.config.KafkaProducerAndConsumerConfig;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import reactor.kafka.receiver.KafkaReceiver;
+import reactor.kafka.receiver.ReceiverOptions;
+import reactor.kafka.sender.KafkaSender;
+import reactor.kafka.sender.SenderOptions;
+
+/**
+ * @author Panzi
+ * @Description kafka uri
+ * @date 2022/5/2 16:33
+ */
+@Configuration
+@ConditionalOnClass(KafkaCommonConfig.class)
+@Order(1)
+@Slf4j
+public class KafkaConfig {
+
+    public static final String TEST_PRODUCER = "testProducer";
+    public static final String TEST_Customer = "testConsumer";
+
+    private volatile static KafkaProducerAndConsumerConfig testProducerConfig;
+
+    private volatile static KafkaProducerAndConsumerConfig testConsumerConfig;
+
+    @Bean("kafkaClusterConfig")
+    @ConfigurationProperties(prefix = "cmc.crypto.currency.scheduler.kafka")
+    public KafkaClusterConfig kafkaClusterConfig() {
+        return new KafkaClusterConfig();
+    }
+
+    @Bean("kafkaCommonConfig")
+    public KafkaCommonConfig kafkaConfig(@Qualifier("kafkaClusterConfig") KafkaClusterConfig kafkaClusterConfig) {
+        return new KafkaCommonConfig(kafkaClusterConfig);
+    }
+
+    @Bean("testProducerConfig")
+    @ConfigurationProperties("cmc.crypto.currency.scheduler.kafka.producer.test")
+    public KafkaProducerAndConsumerConfig buildTestProducerConfig() {
+        testProducerConfig = new KafkaProducerAndConsumerConfig();
+        return testProducerConfig;
+    }
+
+    @Bean("testConsumerConfig")
+    @ConfigurationProperties("cmc.crypto.currency.scheduler.kafka.consumer.test")
+    public KafkaProducerAndConsumerConfig buildTestConsumerConfig() {
+        testConsumerConfig = new KafkaProducerAndConsumerConfig();
+        return testConsumerConfig;
+    }
+
+    @Bean(value = TEST_PRODUCER)
+    public KafkaSender<String, String> buildNewSpotCollectorProducer(
+        @Qualifier("kafkaCommonConfig") KafkaCommonConfig kafkaCommonConfig) {
+
+        SenderOptions<String, String> senderOptions = SenderOptions.create();
+        senderOptions.producerProperties().put(ProducerConfig.CLIENT_ID_CONFIG, testProducerConfig.getClientId());
+        senderOptions.producerProperties().putAll(kafkaCommonConfig.commonProducerConfig());
+        return KafkaSender.create(senderOptions);
+    }
+
+    @Bean(value = TEST_Customer)
+    public KafkaReceiver<String, String> buildNewSpotCollectorConsumer(
+        @Qualifier("kafkaCommonConfig") KafkaCommonConfig kafkaCommonConfig) {
+
+        ReceiverOptions<String, String> receiverOptions = ReceiverOptions.create();
+        receiverOptions.consumerProperties().put(ConsumerConfig.CLIENT_ID_CONFIG, testProducerConfig.getClientId());
+        receiverOptions.consumerProperties().put(ConsumerConfig.GROUP_ID_CONFIG, testProducerConfig.getGroupId());
+        receiverOptions.consumerProperties().putAll(kafkaCommonConfig.commonConsumerConfig());
+        return KafkaReceiver.create(receiverOptions);
+    }
+
+}

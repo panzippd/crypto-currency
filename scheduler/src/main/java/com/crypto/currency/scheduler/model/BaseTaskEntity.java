@@ -1,5 +1,7 @@
 package com.crypto.currency.scheduler.model;
 
+import lombok.Data;
+
 import java.time.LocalDateTime;
 
 /**
@@ -7,6 +9,7 @@ import java.time.LocalDateTime;
  * @Description the parent class for task
  * @date 2022/4/30 18:05
  */
+@Data
 public class BaseTaskEntity {
 
     private LocalDateTime scheduleTime;
