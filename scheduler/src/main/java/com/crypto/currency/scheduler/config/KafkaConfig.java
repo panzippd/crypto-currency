@@ -17,6 +17,8 @@ import reactor.kafka.receiver.ReceiverOptions;
 import reactor.kafka.sender.KafkaSender;
 import reactor.kafka.sender.SenderOptions;
 
+import java.util.Map;
+
 /**
  * @author Panzi
  * @Description kafka uri
@@ -63,21 +65,19 @@ public class KafkaConfig {
     @Bean(value = TEST_PRODUCER)
     public KafkaSender<String, String> buildNewSpotCollectorProducer(
         @Qualifier("kafkaCommonConfig") KafkaCommonConfig kafkaCommonConfig) {
-
-        SenderOptions<String, String> senderOptions = SenderOptions.create();
-        senderOptions.producerProperties().put(ProducerConfig.CLIENT_ID_CONFIG, testProducerConfig.getClientId());
-        senderOptions.producerProperties().putAll(kafkaCommonConfig.commonProducerConfig());
+        Map<String, Object> props = kafkaCommonConfig.commonProducerConfig();
+        props.put(ProducerConfig.CLIENT_ID_CONFIG, testProducerConfig.getClientId());
+        SenderOptions<String, String> senderOptions = SenderOptions.create(props);
         return KafkaSender.create(senderOptions);
     }
 
     @Bean(value = TEST_Customer)
     public KafkaReceiver<String, String> buildNewSpotCollectorConsumer(
         @Qualifier("kafkaCommonConfig") KafkaCommonConfig kafkaCommonConfig) {
-
-        ReceiverOptions<String, String> receiverOptions = ReceiverOptions.create();
-        receiverOptions.consumerProperties().put(ConsumerConfig.CLIENT_ID_CONFIG, testProducerConfig.getClientId());
-        receiverOptions.consumerProperties().put(ConsumerConfig.GROUP_ID_CONFIG, testProducerConfig.getGroupId());
-        receiverOptions.consumerProperties().putAll(kafkaCommonConfig.commonConsumerConfig());
+        Map<String, Object> props = kafkaCommonConfig.commonConsumerConfig();
+        props.put(ProducerConfig.CLIENT_ID_CONFIG, testConsumerConfig.getClientId());
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, testConsumerConfig.getGroupId());
+        ReceiverOptions<String, String> receiverOptions = ReceiverOptions.create(props);
         return KafkaReceiver.create(receiverOptions);
     }
 
