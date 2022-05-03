@@ -17,6 +17,7 @@ import reactor.kafka.receiver.ReceiverOptions;
 import reactor.kafka.sender.KafkaSender;
 import reactor.kafka.sender.SenderOptions;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -72,13 +73,17 @@ public class KafkaConfig {
     }
 
     @Bean(value = TEST_Customer)
-    public KafkaReceiver<String, String> buildNewSpotCollectorConsumer(
+    public KafkaReceiver<Object, Object> buildNewSpotCollectorConsumer(
         @Qualifier("kafkaCommonConfig") KafkaCommonConfig kafkaCommonConfig) {
         Map<String, Object> props = kafkaCommonConfig.commonConsumerConfig();
         props.put(ProducerConfig.CLIENT_ID_CONFIG, testConsumerConfig.getClientId());
         props.put(ConsumerConfig.GROUP_ID_CONFIG, testConsumerConfig.getGroupId());
-        ReceiverOptions<String, String> receiverOptions = ReceiverOptions.create(props);
+        ReceiverOptions<Object, Object> receiverOptions =
+            ReceiverOptions.create(props).subscription(Collections.singleton(testConsumerConfig.getTopic()))
+                .addAssignListener(partitions -> log.debug("onPartitionsAssigned : {}", partitions))
+                .addRevokeListener(partitions -> log.debug("onPartitionsRevoked : {}", partitions));
         return KafkaReceiver.create(receiverOptions);
+        //        return receiverOptions;
     }
 
 }

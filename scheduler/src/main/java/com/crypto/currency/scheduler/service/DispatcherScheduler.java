@@ -2,12 +2,12 @@ package com.crypto.currency.scheduler.service;
 
 import com.crypto.currency.common.exception.BusinessException;
 import com.crypto.currency.common.utils.CollectionUtils;
-import com.crypto.currency.common.utils.ExtUtils;
+import com.crypto.currency.common.utils.DateTimeUtils;
 import com.crypto.currency.common.utils.JacksonUtils;
+import com.crypto.currency.common.utils.StringUtils;
 import com.crypto.currency.scheduler.model.BaseTaskEntity;
 import com.crypto.currency.scheduler.service.scheduler.IScheduler;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -64,8 +64,8 @@ public class DispatcherScheduler {
             BusinessException.throwIfMessage("task is null");
         }
         return Flux.fromStream(tasks.stream()).onBackpressureBuffer(tasks.size()).map(m -> {
-            m.setTranId(ExtUtils.uuid());
-            m.setScheduleTime(ExtUtils.nowUTC());
+            m.setTranId(StringUtils.uuid());
+            m.setScheduleTime(DateTimeUtils.nowUTC());
             return SenderRecord.create(new ProducerRecord<>(topic, m.getTranId(), JacksonUtils.toJson(m)), m);
         });
     }
@@ -82,7 +82,6 @@ public class DispatcherScheduler {
         return producer.send(messages).delayElements(Duration.ofMillis(7))
             .switchIfEmpty(Mono.error(new BusinessException("Unkown.")))
             .doOnNext(r -> log.info("task:{},succeed!", r.correlationMetadata())).onErrorContinue((throwable, s) -> {
-                // TODO send rest request for failure.
                 log.error("Task:{},Error:{}", s, throwable);
             });
     }

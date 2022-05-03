@@ -9,13 +9,18 @@ import com.crypto.currency.scheduler.service.DispatcherScheduler;
 import com.crypto.currency.scheduler.service.scheduler.ExchangeSpotScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
+import reactor.kafka.receiver.KafkaReceiver;
+import reactor.kafka.receiver.ReceiverOffset;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,6 +32,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/exchange")
 public class ExchangeController {
+
+    @Autowired
+    private ApplicationContext context;
 
     @Autowired
     private ExchangeRepository exchangeRepository;
@@ -47,6 +55,22 @@ public class ExchangeController {
         log.info("the doExchangeSpotScheduler start,params={}", DataType.SPOT.getCategory());
         dispatcher.doDispatch(ExchangeSpotScheduler.class, KafkaConfig.TEST_PRODUCER, testProducerConfig.getTopic(),
             DataType.SPOT.getCategory());
+    }
+
+    @GetMapping("/testkafka")
+    public void runner() {
+        log.info("the testKafkaReceiver start");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss:SSS z dd MMM yyyy");
+        KafkaReceiver<Object, Object> receiver =
+            (KafkaReceiver<Object, Object>)context.getBean(KafkaConfig.TEST_Customer);
+
+        receiver.receive().doOnNext(record -> {
+            ReceiverOffset offset = record.receiverOffset();
+            System.out.printf("Received message: topic-partition=%s offset=%d timestamp=%s key=%s value=%s \n",
+                offset.topicPartition(), offset.offset(), dateFormat.format(new Date(record.timestamp())),
+                record.key().toString(), record.value().toString());
+            offset.acknowledge();
+        }).subscribe();
     }
 
 }
