@@ -1,7 +1,5 @@
-package com.crypto.currency.scheduler.controller;
+package com.crypto.currency.collector.controller;
 
-import com.crypto.currency.common.utils.JacksonUtils;
-import com.crypto.currency.data.entity.ExchangeEntity;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -11,8 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigDecimal;
-import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**

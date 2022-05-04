@@ -1,4 +1,4 @@
-package com.crypto.currency.scheduler.config;
+package com.crypto.currency.collector.config;
 
 import com.crypto.currency.data.config.KafkaClusterConfig;
 import com.crypto.currency.data.config.KafkaCommonConfig;
@@ -39,7 +39,7 @@ public class KafkaConfig {
     private volatile static KafkaProducerAndConsumerConfig testConsumerConfig;
 
     @Bean("kafkaClusterConfig")
-    @ConfigurationProperties(prefix = "cmc.crypto.currency.scheduler.kafka")
+    @ConfigurationProperties(prefix = "cmc.crypto.currency.collector.kafka")
     public KafkaClusterConfig kafkaClusterConfig() {
         return new KafkaClusterConfig();
     }
@@ -50,14 +50,14 @@ public class KafkaConfig {
     }
 
     @Bean("testProducerConfig")
-    @ConfigurationProperties("cmc.crypto.currency.scheduler.kafka.producer.test")
+    @ConfigurationProperties("cmc.crypto.currency.collector.kafka.producer.test")
     public KafkaProducerAndConsumerConfig buildTestProducerConfig() {
         testProducerConfig = new KafkaProducerAndConsumerConfig();
         return testProducerConfig;
     }
 
     @Bean("testConsumerConfig")
-    @ConfigurationProperties("cmc.crypto.currency.scheduler.kafka.consumer.test")
+    @ConfigurationProperties("cmc.crypto.currency.collector.kafka.consumer.test")
     public KafkaProducerAndConsumerConfig buildTestConsumerConfig() {
         testConsumerConfig = new KafkaProducerAndConsumerConfig();
         return testConsumerConfig;
