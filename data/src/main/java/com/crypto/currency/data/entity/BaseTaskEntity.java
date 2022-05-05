@@ -1,4 +1,4 @@
-package com.crypto.currency.scheduler.model;
+package com.crypto.currency.data.entity;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

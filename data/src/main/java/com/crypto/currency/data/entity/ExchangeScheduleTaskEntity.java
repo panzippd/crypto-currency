@@ -1,4 +1,4 @@
-package com.crypto.currency.scheduler.model;
+package com.crypto.currency.data.entity;
 
 import com.crypto.currency.data.enums.DataType;
 import lombok.Builder;

@@ -5,7 +5,7 @@ import com.crypto.currency.common.utils.CollectionUtils;
 import com.crypto.currency.common.utils.DateTimeUtils;
 import com.crypto.currency.common.utils.JacksonUtils;
 import com.crypto.currency.common.utils.StringUtils;
-import com.crypto.currency.scheduler.model.BaseTaskEntity;
+import com.crypto.currency.data.entity.BaseTaskEntity;
 import com.crypto.currency.scheduler.service.scheduler.IScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;

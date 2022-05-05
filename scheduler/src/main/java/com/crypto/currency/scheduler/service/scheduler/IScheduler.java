@@ -1,6 +1,6 @@
 package com.crypto.currency.scheduler.service.scheduler;
 
-import com.crypto.currency.scheduler.model.BaseTaskEntity;
+import com.crypto.currency.data.entity.BaseTaskEntity;
 
 import java.util.List;
 

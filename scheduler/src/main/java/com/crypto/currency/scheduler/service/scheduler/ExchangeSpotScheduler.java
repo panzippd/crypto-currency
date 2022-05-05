@@ -1,10 +1,10 @@
 package com.crypto.currency.scheduler.service.scheduler;
 
 import com.crypto.currency.common.utils.CollectionUtils;
+import com.crypto.currency.data.entity.ExchangeScheduleTaskEntity;
 import com.crypto.currency.data.enums.DataType;
 import com.crypto.currency.scheduler.cache.ExchangeCache;
 import com.crypto.currency.scheduler.model.ExchangeInfoDTO;
-import com.crypto.currency.scheduler.model.ExchangeScheduleTaskEntity;
 import com.crypto.currency.scheduler.model.MarketPairDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
