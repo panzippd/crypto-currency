@@ -1,5 +1,6 @@
 package com.crypto.currency.collector.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -32,12 +33,16 @@ public class SystemController {
         this.context = context;
     }
 
+    @Autowired
+    private SystemShutDownController shutDownController;
+
     @GetMapping("/shutdown")
     public ResponseEntity<String> shutdownApp() {
         HEALTH.set(false);
 
         new Thread(() -> {
             System.out.println("Shutdown Hook is running !");
+            shutDownController.shutDownAll();
             try {
                 Thread.sleep(1000 * 15);
             } catch (InterruptedException e) {
