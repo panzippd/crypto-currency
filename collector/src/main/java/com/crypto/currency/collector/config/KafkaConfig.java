@@ -3,6 +3,7 @@ package com.crypto.currency.collector.config;
 import com.crypto.currency.data.config.KafkaClusterConfig;
 import com.crypto.currency.data.config.KafkaCommonConfig;
 import com.crypto.currency.data.config.KafkaProducerAndConsumerConfig;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -12,12 +13,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import reactor.kafka.receiver.KafkaReceiver;
 import reactor.kafka.receiver.ReceiverOptions;
 import reactor.kafka.sender.KafkaSender;
 import reactor.kafka.sender.SenderOptions;
 
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -72,17 +71,16 @@ public class KafkaConfig {
         return KafkaSender.create(senderOptions);
     }
 
-    @Bean(value = TEST_Customer)
-    public KafkaReceiver<Object, Object> buildNewSpotCollectorConsumer(
-        @Qualifier("kafkaCommonConfig") KafkaCommonConfig kafkaCommonConfig) {
-        Map<String, Object> props = kafkaCommonConfig.commonConsumerConfig();
-        props.put(ProducerConfig.CLIENT_ID_CONFIG, testConsumerConfig.getClientId());
+    public ReceiverOptions<String, String> buildTestSchedulerConsumer(KafkaCommonConfig kafkaCommonConfig) {
+
+        Map<String, Object> props = Maps.newHashMap(kafkaCommonConfig.commonConsumerConfig());
+        props.put(ConsumerConfig.CLIENT_ID_CONFIG, testConsumerConfig.getClientId());
         props.put(ConsumerConfig.GROUP_ID_CONFIG, testConsumerConfig.getGroupId());
-        ReceiverOptions<Object, Object> receiverOptions =
-            ReceiverOptions.create(props).subscription(Collections.singleton(testConsumerConfig.getTopic()))
-                .addAssignListener(partitions -> log.debug("onPartitionsAssigned : {}", partitions))
-                .addRevokeListener(partitions -> log.debug("onPartitionsRevoked : {}", partitions));
-        return KafkaReceiver.create(receiverOptions);
+        return ReceiverOptions.create(props);
+    }
+
+    public static KafkaProducerAndConsumerConfig getTestConsumerConfig() {
+        return testConsumerConfig;
     }
 
 }

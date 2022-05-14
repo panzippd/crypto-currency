@@ -1,5 +1,7 @@
 package com.crypto.currency.collector.controller;
 
+import com.crypto.currency.collector.consumer.ConsumerRegister;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -10,8 +12,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class SystemShutDownController {
 
-    //    @Autowired
-    //    private ConsumerRegister consumerRegister;
+    @Autowired
+    private ConsumerRegister consumerRegister;
 
     public void shutDownAll() {
 
@@ -19,6 +21,6 @@ public class SystemShutDownController {
     }
 
     private void shutDownKafkaConsumer() {
-        //        consumerRegister.destroy();
+        consumerRegister.destroy();
     }
 }
