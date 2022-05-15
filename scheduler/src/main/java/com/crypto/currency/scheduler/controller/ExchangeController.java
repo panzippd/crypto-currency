@@ -34,7 +34,7 @@ import java.util.List;
 public class ExchangeController {
 
     @Autowired
-    private ApplicationContext context;
+    private static volatile ApplicationContext context;
 
     @Autowired
     private ExchangeRepository exchangeRepository;
