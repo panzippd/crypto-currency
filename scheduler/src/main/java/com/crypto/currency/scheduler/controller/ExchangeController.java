@@ -1,5 +1,6 @@
 package com.crypto.currency.scheduler.controller;
 
+import com.crypto.currency.common.utils.SpringBeanUtils;
 import com.crypto.currency.data.config.KafkaProducerAndConsumerConfig;
 import com.crypto.currency.data.entity.ExchangeEntity;
 import com.crypto.currency.data.enums.DataType;
@@ -9,7 +10,6 @@ import com.crypto.currency.scheduler.service.DispatcherScheduler;
 import com.crypto.currency.scheduler.service.scheduler.ExchangeSpotScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,9 +32,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/exchange")
 public class ExchangeController {
-
-    @Autowired
-    private static volatile ApplicationContext context;
 
     @Autowired
     private ExchangeRepository exchangeRepository;
@@ -62,7 +59,7 @@ public class ExchangeController {
         log.info("the testKafkaReceiver start");
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss:SSS z dd MMM yyyy");
         KafkaReceiver<Object, Object> receiver =
-            (KafkaReceiver<Object, Object>)context.getBean(KafkaConfig.TEST_Customer);
+            (KafkaReceiver<Object, Object>)SpringBeanUtils.getBean(KafkaConfig.TEST_Customer);
 
         receiver.receive().doOnNext(record -> {
             ReceiverOffset offset = record.receiverOffset();

@@ -4,13 +4,12 @@ import com.crypto.currency.common.exception.BusinessException;
 import com.crypto.currency.common.utils.CollectionUtils;
 import com.crypto.currency.common.utils.DateTimeUtils;
 import com.crypto.currency.common.utils.JacksonUtils;
+import com.crypto.currency.common.utils.SpringBeanUtils;
 import com.crypto.currency.common.utils.StringUtils;
 import com.crypto.currency.data.entity.BaseTaskEntity;
 import com.crypto.currency.scheduler.service.scheduler.IScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -30,9 +29,6 @@ import java.util.List;
 @Component
 public class DispatcherScheduler {
 
-    @Autowired
-    private ApplicationContext context;
-
     /**
      * dispatch task to collector
      *
@@ -45,7 +41,7 @@ public class DispatcherScheduler {
         if (bean == null || StringUtils.isBlank(topic)) {
             BusinessException.throwIfMessage("bean or topic is null");
         }
-        IScheduler scheduler = context.getBean(bean);
+        IScheduler scheduler = SpringBeanUtils.getBean(bean);
         List<BaseTaskEntity> tasks = (List<BaseTaskEntity>)scheduler.schedule(param);
         log.info("Try to schedule, topic: {}, task: {}", topic, tasks.toString());
         send(producer, buildMessages(tasks, topic)).subscribe();
@@ -78,7 +74,7 @@ public class DispatcherScheduler {
     private Flux<SenderResult<BaseTaskEntity>> send(String producerName,
         Flux<SenderRecord<String, String, BaseTaskEntity>> messages) {
 
-        KafkaSender<String, String> producer = (KafkaSender<String, String>)context.getBean(producerName);
+        KafkaSender<String, String> producer = (KafkaSender<String, String>)SpringBeanUtils.getBean(producerName);
         return producer.send(messages).delayElements(Duration.ofMillis(7))
             .switchIfEmpty(Mono.error(new BusinessException("Unkown.")))
             .doOnNext(r -> log.info("task:{},succeed!", r.correlationMetadata())).onErrorContinue((throwable, s) -> {

@@ -2,9 +2,8 @@ package com.crypto.currency.collector.support;
 
 import com.crypto.currency.collector.crypto.base.ISupply;
 import com.crypto.currency.collector.exchange.IExchange;
+import com.crypto.currency.common.utils.SpringBeanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 
 /**
  * @author Panzi
@@ -13,15 +12,12 @@ import org.springframework.context.ApplicationContext;
  */
 public class FunctionalFactory {
 
-    @Autowired
-    private static volatile ApplicationContext context;
-
     public static IExchange getExchange(String id) {
 
         if (StringUtils.isBlank(id)) {
             return null;
         }
-        return (IExchange)context.getBean(BeanScanHandler.EXCHANGE + id);
+        return (IExchange)SpringBeanUtils.getBean(BeanScanHandler.EXCHANGE + id);
     }
 
     public static ISupply getSupply(String id) {
@@ -29,7 +25,7 @@ public class FunctionalFactory {
         if (StringUtils.isBlank(id)) {
             return null;
         }
-        return (ISupply)context.getBean(BeanScanHandler.CRYPTO + id);
+        return (ISupply)SpringBeanUtils.getBean(BeanScanHandler.CRYPTO + id);
     }
 
 }
