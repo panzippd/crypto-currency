@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Panzi
- * @Description 注入和获取调用交易所或项目方数据接口的实现类
+ * @Description Get the implementation class of the calling exchange and project API
  * @date 2022/5/15 21:45
  */
 public class FunctionalFactory {

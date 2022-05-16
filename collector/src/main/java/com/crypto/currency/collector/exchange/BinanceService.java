@@ -1,9 +1,17 @@
 package com.crypto.currency.collector.exchange;
 
+import com.crypto.currency.collector.support.annotation.Exchange;
+import com.crypto.currency.common.utils.DateTimeUtils;
+import com.crypto.currency.common.utils.JacksonUtils;
+import com.crypto.currency.common.utils.StringUtils;
 import com.crypto.currency.data.entity.ExchangeScheduleTaskEntity;
 import com.crypto.currency.data.entity.TickerEntity;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
@@ -16,7 +24,9 @@ import java.util.Map;
  * @Description get binance exchange data
  * @date 2022/5/5 23:10
  */
-public class BinanceService {
+@Slf4j
+@Exchange(id = "270", name = "Binance")
+public class BinanceService extends AExchange {
     // Global
     private static final String URL = "https://api.binance.com/api/v1/ticker/24hr";
 
@@ -43,12 +53,13 @@ public class BinanceService {
     // China
     // private final static String URL = "https://api.binancezh.com/api/v1/ticker/24hr";
 
-    //    @Override
+    @Override
     public Mono<TickerEntity> getTickers(ExchangeScheduleTaskEntity task) {
-        //        return Mono.zip(get(buildProxyUrl(URL, null)).map(m -> JSONU.parseArray(m, BinanceTickerData.class)),
-        //                get(buildProxyUrl(EX_INFO_URL, null)).map(m -> JSON.parseObject(m, BinanceExInfoData.class)))
-        //            .map(item -> this.toEntity(item, true));
-        return null;
+        //todo deserialize maybe wrong
+        return Mono.zip(get(buildProxyUrl(URL, null)).map(
+                m -> JacksonUtils.deserialize(m, new TypeReference<List<BinanceTickerData>>() {
+                })), get(buildProxyUrl(EX_INFO_URL, null)).map(m -> JacksonUtils.deserialize(m, BinanceExInfoData.class)))
+            .map(item -> this.toEntity(item, true));
     }
 
     private TickerEntity toEntity(Tuple2<List<BinanceTickerData>, BinanceExInfoData> tuple, boolean isSpot) {
@@ -64,39 +75,38 @@ public class BinanceService {
             // nothing
         }
 
-        //        TickerEntity tickerEntity = TickerEntity.builder().exchangeId(getExchangeId()).exchangeName(getExchangeName())
-        //            .cmcTickers(Lists.newArrayListWithCapacity(tickers.size())).updatedTime(ExtUtils.nowUTC()).build();
-        //
-        //        List<TickerEntity.CMCTicker> list = tickerEntity.getCmcTickers();
-        //        for (BinanceTickerData d : tickers) {
-        //            Pair<String, String> p = symbolUtils.splitWithFullString(getExchangeId(), d.getSymbol());
-        //
-        //            BinanceExInfoSymbol symbolInfo = symbolMap.get(d.getSymbol());
-        //            if (symbolInfo != null) {
-        //                if (p == null) {
-        //                    // main = right = quote, base = left = base
-        //                    p = Pair.of(symbolInfo.getBaseAsset(), symbolInfo.getQuoteAsset());
-        //                }
-        //
-        //                if (isSpot && !StringUtils.equalsIgnoreCase(symbolInfo.getStatus(), "TRADING")) {
-        //                    p = null;
-        //                }
-        //
-        //            }
-        //
-        //            TickerEntity.CMCTicker t;
-        //            if (p != null) {
-        //                t = TickerEntity.CMCTicker.builder().mainSymbol(p.getRight()).baseSymbol(p.getLeft())
-        //                    .quote(d.getLastPrice()).mainVolume(d.getVolume().multiply(d.getLastPrice())).build();
-        //            } else {
-        //                t = TickerEntity.CMCTicker.builder().baseSymbol(d.getSymbol()).quote(d.getLastPrice())
-        //                    .mainVolume(d.getVolume().multiply(d.getLastPrice())).build();
-        //            }
-        //            list.add(t);
-        //
-        //        }
-        //        return tickerEntity;
-        return null;
+        TickerEntity tickerEntity = TickerEntity.builder().exchangeId(getExchangeId()).exchangeName(getExchangeName())
+            .cmcTickers(Lists.newArrayListWithCapacity(tickers.size())).updatedTime(DateTimeUtils.nowUTC()).build();
+
+        List<TickerEntity.CMCTicker> list = tickerEntity.getCmcTickers();
+        for (BinanceTickerData d : tickers) {
+            Pair<String, String> p = symbolUtils.splitWithFullString(getExchangeId(), d.getSymbol());
+
+            BinanceExInfoSymbol symbolInfo = symbolMap.get(d.getSymbol());
+            if (symbolInfo != null) {
+                if (p == null) {
+                    // main = right = quote, base = left = base
+                    p = Pair.of(symbolInfo.getBaseAsset(), symbolInfo.getQuoteAsset());
+                }
+
+                if (isSpot && !StringUtils.equalsIgnoreCase(symbolInfo.getStatus(), "TRADING")) {
+                    p = null;
+                }
+
+            }
+
+            TickerEntity.CMCTicker t;
+            if (p != null) {
+                t = TickerEntity.CMCTicker.builder().mainSymbol(p.getRight()).baseSymbol(p.getLeft())
+                    .quote(d.getLastPrice()).mainVolume(d.getVolume().multiply(d.getLastPrice())).build();
+            } else {
+                t = TickerEntity.CMCTicker.builder().baseSymbol(d.getSymbol()).quote(d.getLastPrice())
+                    .mainVolume(d.getVolume().multiply(d.getLastPrice())).build();
+            }
+            list.add(t);
+
+        }
+        return tickerEntity;
     }
 
     //    @Override
@@ -116,7 +126,7 @@ public class BinanceService {
     //
     //        return ob;
     //    }
-    //
+
     //    @Override
     //    public Mono<TickerEntity> getFuturesTickers(
     //        ExchangeScheduleTaskEntity task) {  //binance这个组接口由全部Futures数据和少量PERPETUAL数据
