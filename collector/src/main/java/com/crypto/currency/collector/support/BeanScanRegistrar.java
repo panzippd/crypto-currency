@@ -18,7 +18,7 @@ import org.springframework.core.type.AnnotationMetadata;
 @Slf4j
 public class BeanScanRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware {
 
-    private ResourceLoader resourceLoader;
+    private ResourceLoader resourceLoader;  //todo maybe not need?
 
     @Override
     public void setResourceLoader(ResourceLoader resourceLoader) {
