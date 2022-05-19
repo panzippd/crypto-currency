@@ -21,7 +21,7 @@ import java.util.Set;
 
 /**
  * @author Panzi
- * @Description fiat-payment-service
+ * @Description update beanName and register again
  * @date 2022/5/15 21:58
  */
 @Slf4j

@@ -12,7 +12,7 @@ import org.springframework.core.type.AnnotationMetadata;
 
 /**
  * @author Panzi
- * @Description fiat-payment-service
+ * @Description register class path by FunctionalScan
  * @date 2022/5/15 22:03
  */
 @Slf4j

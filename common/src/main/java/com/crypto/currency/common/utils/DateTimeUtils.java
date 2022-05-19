@@ -467,8 +467,6 @@ public class DateTimeUtils {
         return dateInMonth.with(TemporalAdjusters.lastDayOfMonth());
     }
 
-    // TODO need to write unittest blew.
-
     /**
      * get the current date.
      *

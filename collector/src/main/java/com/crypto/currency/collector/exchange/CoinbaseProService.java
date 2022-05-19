@@ -70,40 +70,6 @@ public class CoinbaseProService extends AExchange {
         return tickerEntity;
     }
 
-    /**
-     * 文档:https://docs.pro.coinbase.com/#get-product-order-book
-     * https://api.pro.coinbase.com/products/BTC-USD/book?level=2
-     * 结果:{"sequence":14514643295,"bids":[["9540.86","3.10149878",3],["9537.02","0.001",1],["9537","0.886",2],["9536.06","1.5",1],["9535.02","0.5",1],["9534.98","3.999",1],["9534.32","0.503938",1],["9534.31","0.34478246",1],["9534.3","0.42060787",1],["9533.56","0.4",1],["9533.54","0.2922",1]]}
-     */
-    //    @Override
-    //    protected Mono<OrderBookEntity> getOrderBooks(ScheduleTaskEntity task) {
-    //        return get(OD_URL + task.getBaseSymbol() + "-" + task.getMainSymbol() + "/book?level=2").map(
-    //            m -> this.toOrderBookEntity(task, JSON.parseObject(m, CoinbaseProOrderBookData.class)));
-    //    }
-    //
-    //    private OrderBookEntity toOrderBookEntity(ScheduleTaskEntity task, CoinbaseProOrderBookData data) {
-    //        OrderBookEntity ob =
-    //            OrderBookEntity.builder().exchangeId(getExchangeId()).snapshotTime(System.currentTimeMillis())
-    //                .baseId(task.getBaseId()).quoteId(task.getMainId()).build();
-    //
-    //        ob.setAsks(getAskBid(data.getAsks()));
-    //        ob.setBids(getAskBid(data.getBids()));
-    //
-    //        return ob;
-    //    }
-    //
-    //    private List<BigDecimal[]> getAskBid(List<BigDecimal[]> i) {
-    //        List<BigDecimal[]> r = Lists.newArrayListWithCapacity(i.size());
-    //
-    //        for (var item : i) {
-    //            BigDecimal[] b = new BigDecimal[2];
-    //            b[0] = item[0];
-    //            b[1] = item[1];
-    //            r.add(b);
-    //        }
-    //        return r;
-    //    }
-
     @Data
     public static class CoinbaseTickerData {
         private String trade_id;
