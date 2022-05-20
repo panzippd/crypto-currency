@@ -61,39 +61,26 @@ public class TestEventHandler implements WorkHandler<SchedulerTaskEvent> {
 
         final IExchange exchange = FunctionalFactory.getExchange(taskEntity.getExchangeId().toString());
         Publisher<SenderRecord<String, String, TickerEntity>> tickerPublisher;
-        if (taskEntity.isTakeTradingPair()) {
-            tickerPublisher = exchange.getTradingPairDatas(taskEntity).flatMap(t -> {
-                t.setScheduleTime(taskEntity.getScheduleTime());
-                t.setTranId(taskEntity.getTranId());
-                return exchange.getTickerData(t);
-            }).map(result -> {
-                result.setPushTime(DateTimeUtils.nowUTC());
-                return SenderRecord.create(
-                    new ProducerRecord<>(KafkaConfig.getTestConsumerConfig().getTopic(), StringUtils.uuid(),
-                        JacksonUtils.serialize(result)), result);
-            });
-        } else {
-            tickerPublisher = Mono.just(taskEntity).flatMap(t -> exchange.getTickerData(taskEntity)).map(r -> {
-                r.setPushTime(DateTimeUtils.nowUTC());
-                List<TickerEntity.CMCTicker> cmcTickers = r.getCmcTickers();
-                if (!CollectionUtils.isEmpty(cmcTickers) && cmcTickers.size() > THRESHOLD) {
-                    List<List<TickerEntity.CMCTicker>> partition =
-                        CollectionUtils.groupListByQuantity(cmcTickers, THRESHOLD);
-                    return partition.stream().map(sub -> {
-                        TickerEntity entity = new TickerEntity();
-                        BeanUtils.copyProperties(r, entity);
-                        entity.setCmcTickers(sub);
-                        return SenderRecord.create(
-                            new ProducerRecord<>(KafkaConfig.getTestConsumerConfig().getTopic(), StringUtils.uuid(),
-                                JacksonUtils.serialize(entity)), entity);
-                    }).collect(Collectors.toList());
-                } else {
-                    return List.of(SenderRecord.create(
+        tickerPublisher = Mono.just(taskEntity).flatMap(t -> exchange.getTickerData(taskEntity)).map(r -> {
+            r.setPushTime(DateTimeUtils.nowUTC());
+            List<TickerEntity.CMCTicker> cmcTickers = r.getCmcTickers();
+            if (!CollectionUtils.isEmpty(cmcTickers) && cmcTickers.size() > THRESHOLD) {
+                List<List<TickerEntity.CMCTicker>> partition =
+                    CollectionUtils.groupListByQuantity(cmcTickers, THRESHOLD);
+                return partition.stream().map(sub -> {
+                    TickerEntity entity = new TickerEntity();
+                    BeanUtils.copyProperties(r, entity);
+                    entity.setCmcTickers(sub);
+                    return SenderRecord.create(
                         new ProducerRecord<>(KafkaConfig.getTestConsumerConfig().getTopic(), StringUtils.uuid(),
-                            JacksonUtils.serialize(r)), r));
-                }
-            }).flatMapMany(r -> Flux.fromIterable(r));
-        }
+                            JacksonUtils.serialize(entity)), entity);
+                }).collect(Collectors.toList());
+            } else {
+                return List.of(SenderRecord.create(
+                    new ProducerRecord<>(KafkaConfig.getTestConsumerConfig().getTopic(), StringUtils.uuid(),
+                        JacksonUtils.serialize(r)), r));
+            }
+        }).flatMapMany(r -> Flux.fromIterable(r));
         return tickerPublisher;
     }
 }
