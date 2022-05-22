@@ -1,8 +1,10 @@
 package com.crypto.currency.data.entity;
 
 import com.crypto.currency.data.enums.DataType;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Panzi
@@ -11,6 +13,8 @@ import lombok.Data;
  */
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ExchangeScheduleTaskEntity extends BaseTaskEntity {
 
     private Integer exchangeId;

@@ -6,7 +6,6 @@ import com.crypto.currency.data.config.KafkaCommonConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
@@ -21,9 +20,6 @@ import java.time.Duration;
 @Component
 @Slf4j
 public class ConsumerConfigure implements ApplicationListener<ContextRefreshedEvent> {
-
-    @Value("${com.worker.collector.kafka.disable:false}")
-    private String disableConsumer;
 
     @Autowired
     private ConsumerRegister consumerRegister;
@@ -42,11 +38,6 @@ public class ConsumerConfigure implements ApplicationListener<ContextRefreshedEv
     }
 
     public void init() {
-
-        if ("true".equalsIgnoreCase(disableConsumer)) {
-            log.info("worker.collector.kafka.disable:{}", disableConsumer);
-            return;
-        }
 
         consumerRegister.register(
             /**

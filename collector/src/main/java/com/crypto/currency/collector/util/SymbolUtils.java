@@ -1,7 +1,5 @@
 package com.crypto.currency.collector.util;
 
-import com.crypto.currency.common.utils.CollectionUtils;
-import com.crypto.currency.data.vo.ParsedTradePairVO;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import lombok.Data;
@@ -9,22 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
 
-import javax.annotation.PostConstruct;
-import java.net.URI;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author Panzi
@@ -35,17 +21,9 @@ import java.util.stream.Collectors;
 @Component
 public class SymbolUtils {
     private static final String CACHE_KEY_TEMPLATE_EXCHANGE_SYMBOL = "v3:worker-processor:exchange:symbol:%s";
-    private WebClient marketServiceClient;
 
     @Autowired
     private RestTemplate restTemplate;
-    @Value("${com.cmc.worker.market-service.url}")
-    private String marketServiceUrl;
-
-    @PostConstruct
-    public void init() {
-        marketServiceClient = WebClient.builder().baseUrl(marketServiceUrl).build();
-    }
 
     private static final String UNDERSCORE = "_";
     private static final String HYPHEN = "-";
@@ -96,40 +74,6 @@ public class SymbolUtils {
     //todo
     private Map<String, SymbolPair> getExchangeSymbolCache(Integer exchangeId, boolean isSymbolReversed) {
         return null;
-    }
-
-    /**
-     * Tries to parse the symbols using the market service's /parse API.
-     *
-     * @param symbols a list of symbols to parse
-     * @return mapping between to original symbol to the parsed pair
-     */
-    public Map<String, Pair<String, String>> advancedParse(List<String> symbols) {
-        if (CollectionUtils.isEmpty(symbols)) {
-            return Collections.emptyMap();
-        }
-        List<String> capitalizedSymbols = symbols.stream().map(String::toUpperCase).collect(Collectors.toList());
-        RequestEntity<List<String>> requestEntity =
-            new RequestEntity<>(capitalizedSymbols, HttpMethod.POST, URI.create(marketServiceUrl + "/markets/parse"));
-        ResponseEntity<Map<String, List<ParsedTradePairVO>>> responseEntity =
-            restTemplate.exchange(requestEntity, new ParameterizedTypeReference<>() {
-            });
-        Map<String, List<ParsedTradePairVO>> parsedPairs = responseEntity.getBody();
-
-        if (CollectionUtils.isEmpty(parsedPairs)) {
-            return Collections.emptyMap();
-        }
-
-        Map<String, Pair<String, String>> result = new HashMap<>(parsedPairs.size());
-        for (Map.Entry<String, List<ParsedTradePairVO>> entry : parsedPairs.entrySet()) {
-            List<ParsedTradePairVO> pairs = entry.getValue();
-            if (pairs.size() == 1) {
-                ParsedTradePairVO parsedTradePairVo = pairs.get(0);
-                result.put(entry.getKey(),
-                    Pair.of(parsedTradePairVo.getBaseSymbol(), parsedTradePairVo.getMainSymbol()));
-            }
-        }
-        return result;
     }
 
     /**
