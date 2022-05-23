@@ -83,4 +83,8 @@ public class KafkaConfig {
         return testConsumerConfig;
     }
 
+    public static KafkaProducerAndConsumerConfig getTestProducerConfig() {
+        return testProducerConfig;
+    }
+
 }

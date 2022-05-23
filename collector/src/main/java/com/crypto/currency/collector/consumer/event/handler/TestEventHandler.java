@@ -50,6 +50,7 @@ public class TestEventHandler implements WorkHandler<SchedulerTaskEvent> {
 
     private void sendMessage(KafkaSender<String, String> producer, ExchangeScheduleTaskEntity taskEntity) {
         log.info("producer={},taskEntity={}", producer, taskEntity.toString());
+        Publisher<SenderRecord<String, String, TickerEntity>> publisher = buildSenderRecordPublisher(taskEntity);
     }
 
     /**
@@ -64,6 +65,7 @@ public class TestEventHandler implements WorkHandler<SchedulerTaskEvent> {
         tickerPublisher = Mono.just(taskEntity).flatMap(t -> exchange.getTickerData(taskEntity)).map(r -> {
             r.setPushTime(DateTimeUtils.nowUTC());
             List<TickerEntity.CMCTicker> cmcTickers = r.getCmcTickers();
+            log.info("cmcTickers:={}", cmcTickers);
             if (!CollectionUtils.isEmpty(cmcTickers) && cmcTickers.size() > THRESHOLD) {
                 List<List<TickerEntity.CMCTicker>> partition =
                     CollectionUtils.groupListByQuantity(cmcTickers, THRESHOLD);
@@ -72,12 +74,12 @@ public class TestEventHandler implements WorkHandler<SchedulerTaskEvent> {
                     BeanUtils.copyProperties(r, entity);
                     entity.setCmcTickers(sub);
                     return SenderRecord.create(
-                        new ProducerRecord<>(KafkaConfig.getTestConsumerConfig().getTopic(), StringUtils.uuid(),
+                        new ProducerRecord<>(KafkaConfig.getTestProducerConfig().getTopic(), StringUtils.uuid(),
                             JacksonUtils.serialize(entity)), entity);
                 }).collect(Collectors.toList());
             } else {
                 return List.of(SenderRecord.create(
-                    new ProducerRecord<>(KafkaConfig.getTestConsumerConfig().getTopic(), StringUtils.uuid(),
+                    new ProducerRecord<>(KafkaConfig.getTestProducerConfig().getTopic(), StringUtils.uuid(),
                         JacksonUtils.serialize(r)), r));
             }
         }).flatMapMany(r -> Flux.fromIterable(r));
