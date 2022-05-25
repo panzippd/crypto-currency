@@ -14,7 +14,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.google.common.base.Throwables;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +63,7 @@ public final class JacksonUtils {
      */
     public static JsonNode readTree(String json) {
 
-        if (org.apache.commons.lang3.StringUtils.isBlank(json)) {
+        if (StringUtils.isBlank(json)) {
             return null;
         }
 
@@ -88,7 +87,7 @@ public final class JacksonUtils {
             return serialize(obj);
         } catch (Exception ex) {
             LOGGER.error("JacksonUtils serialize failed", ex);
-            return org.apache.commons.lang3.StringUtils.EMPTY;
+            return StringUtils.EMPTY;
         }
     }
 
@@ -102,9 +101,9 @@ public final class JacksonUtils {
     public static String serialize(Object obj) {
 
         if (obj == null) {
-            return org.apache.commons.lang3.StringUtils.EMPTY;
+            return StringUtils.EMPTY;
         }
-        String jsonStr = org.apache.commons.lang3.StringUtils.EMPTY;
+        String jsonStr = StringUtils.EMPTY;
         try {
             jsonStr = MAPPER.writeValueAsString(obj);
         } catch (Exception e) {
@@ -124,7 +123,7 @@ public final class JacksonUtils {
      */
     public static <T> T deserialize(String s, Class<T> clazz) {
 
-        if (org.apache.commons.lang3.StringUtils.isBlank(s)) {
+        if (StringUtils.isBlank(s)) {
             return null;
         }
         T result = null;

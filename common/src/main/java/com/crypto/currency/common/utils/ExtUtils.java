@@ -45,4 +45,12 @@ public class ExtUtils {
         return v == null ? false : v.booleanValue();
     }
 
+    public static BigDecimal parseBigDecimal(String value) {
+
+        if (StringUtils.isBlank(value) || "null".equals(value)) {
+            return BigDecimal.ZERO;
+        }
+        return new BigDecimal(value.trim());
+    }
+
 }
