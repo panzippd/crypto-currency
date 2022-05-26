@@ -32,9 +32,11 @@ import java.util.Map;
 public class KafkaConfig {
 
     public static final String TEST_PRODUCER = "testProducer";
+    public static final String SPOT_PRODUCER = "spotProducer";
     public static final String TEST_Customer = "testConsumer";
 
     private volatile static KafkaProducerAndConsumerConfig testProducerConfig;
+    private volatile static KafkaProducerAndConsumerConfig spotProducerConfig;
 
     private volatile static KafkaProducerAndConsumerConfig testConsumerConfig;
 
@@ -56,6 +58,13 @@ public class KafkaConfig {
         return testProducerConfig;
     }
 
+    @Bean("spotProducerConfig")
+    @ConfigurationProperties("cmc.crypto.currency.scheduler.kafka.producer.spot")
+    public KafkaProducerAndConsumerConfig buildSpotProducerConfig() {
+        spotProducerConfig = new KafkaProducerAndConsumerConfig();
+        return spotProducerConfig;
+    }
+
     @Bean("testConsumerConfig")
     @ConfigurationProperties("cmc.crypto.currency.scheduler.kafka.consumer.test")
     public KafkaProducerAndConsumerConfig buildTestConsumerConfig() {
@@ -64,10 +73,19 @@ public class KafkaConfig {
     }
 
     @Bean(value = TEST_PRODUCER)
-    public KafkaSender<String, String> buildNewSpotCollectorProducer(
+    public KafkaSender<String, String> buildNewTestCollectorProducer(
         @Qualifier("kafkaCommonConfig") KafkaCommonConfig kafkaCommonConfig) {
         Map<String, Object> props = kafkaCommonConfig.commonProducerConfig();
         props.put(ProducerConfig.CLIENT_ID_CONFIG, testProducerConfig.getClientId());
+        SenderOptions<String, String> senderOptions = SenderOptions.create(props);
+        return KafkaSender.create(senderOptions);
+    }
+
+    @Bean(value = SPOT_PRODUCER)
+    public KafkaSender<String, String> buildNewSpotCollectorProducer(
+        @Qualifier("kafkaCommonConfig") KafkaCommonConfig kafkaCommonConfig) {
+        Map<String, Object> props = kafkaCommonConfig.commonProducerConfig();
+        props.put(ProducerConfig.CLIENT_ID_CONFIG, spotProducerConfig.getClientId());
         SenderOptions<String, String> senderOptions = SenderOptions.create(props);
         return KafkaSender.create(senderOptions);
     }

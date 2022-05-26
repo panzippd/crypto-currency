@@ -39,8 +39,8 @@ public class ExchangeController {
     @Autowired
     private DispatcherScheduler dispatcher;
 
-    @Resource(name = "testProducerConfig")
-    private KafkaProducerAndConsumerConfig testProducerConfig;
+    @Resource(name = "spotProducerConfig")
+    private KafkaProducerAndConsumerConfig spotProducerConfig;
 
     @GetMapping("/query")
     public Mono<List<ExchangeEntity>> getExchange() {
@@ -50,7 +50,7 @@ public class ExchangeController {
     @Scheduled(cron = "0 */5 * * * ?")
     public void doExchangeSpotScheduler() {
         log.info("the doExchangeSpotScheduler start,params={}", DataType.SPOT.getCategory());
-        dispatcher.doDispatch(ExchangeSpotScheduler.class, KafkaConfig.TEST_PRODUCER, testProducerConfig.getTopic(),
+        dispatcher.doDispatch(ExchangeSpotScheduler.class, KafkaConfig.SPOT_PRODUCER, spotProducerConfig.getTopic(),
             DataType.SPOT.getCategory());
     }
 
