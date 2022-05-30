@@ -53,4 +53,18 @@ public class ExtUtils {
         return new BigDecimal(value.trim());
     }
 
+    /**
+     * get Null Bigdecimal the Default Value 0;
+     *
+     * @param a
+     * @return
+     */
+    public static BigDecimal getNotNull(BigDecimal a) {
+
+        if (null == a) {
+            return BigDecimal.ZERO;
+        }
+        return a;
+    }
+
 }

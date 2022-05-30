@@ -22,25 +22,22 @@ import java.util.List;
 public class TickerEntity {
 
     /**
-     * exchangeId	int	是交易ID
+     * exchangeId
      */
     private Integer exchangeId;
 
     private Integer platformId;
 
     /**
-     * exchangeName	string	是交易所
+     * exchangeName
      */
     private String exchangeName;
 
     /**
-     * pushTime	Date	是推送时间
+     * pushTime	Date
      */
     private LocalDateTime pushTime;
 
-    /**
-     * 最新获取时间
-     */
     private LocalDateTime updatedTime;
 
     private List<CMCTicker> cmcTickers;
@@ -86,8 +83,8 @@ public class TickerEntity {
         private String tickerId;
 
         /**
-         * 交割时间类型,周,月,季度等,future有值
-         * perpetual为默认值PERPETUAL
+         * only future
+         * perpetual Default Value PERPETUAL
          */
         private String deliveryTime;
         private String baseSymbol;
@@ -104,7 +101,7 @@ public class TickerEntity {
         private BigDecimal baseVolume;
         private BigDecimal mainVolume;
         /**
-         * 如果usdVolume没有值,mainVolume有值,usdVolume = mainVolume * mainVolume对应的币的USD价格
+         * usdVolume = mainVolume * mainSymbol's  price of USD
          */
         private BigDecimal usdVolume;
 
@@ -117,7 +114,7 @@ public class TickerEntity {
         private BigDecimal openInterest;
         private BigDecimal open_InterestUsd;
         /**
-         * 如果openInterestSymbol有值,open_InterestUsd=open_InterestUsd * openInterestSymbol对应的币的USD价格
+         * if openInterestSymbol have value,open_InterestUsd=open_InterestUsd * openInterestSymbol's  price of USD
          */
         private String openInterestSymbol;
 
@@ -125,7 +122,7 @@ public class TickerEntity {
 
         private LocalDateTime creationTimestamp;
         /**
-         * expiryTimestamp要有值,如果是永续合约,默认值为 4133376000000 (2100年)
+         * expiryTimestamp not null ,the perpetual, default value 4133376000000 (2100 year)
          */
         private LocalDateTime expiryTimestamp;
 
