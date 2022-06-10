@@ -67,4 +67,20 @@ public class ExtUtils {
         return a;
     }
 
+    public static Long getLongNotNull(Long a) {
+
+        if (null == a) {
+            return 0L;
+        }
+        return a;
+    }
+
+    public static <T> T defaultIfNull(T t, T defaultValue) {
+
+        if (t == null) {
+            return defaultValue;
+        }
+        return t;
+    }
+
 }
