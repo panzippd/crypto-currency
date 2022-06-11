@@ -1,6 +1,7 @@
 package com.crypto.currency.common.utils;
 
 import java.math.BigDecimal;
+import java.util.regex.Pattern;
 
 /**
  * @author Panzi
@@ -8,6 +9,8 @@ import java.math.BigDecimal;
  * @date 2022/4/29 17:16
  */
 public class ExtUtils {
+
+    public static final Pattern NUMREG = Pattern.compile("^[+|-]?\\d+(.?\\d)*$");
 
     /**
      * if V is Null,return 0 , or defaultValue
@@ -81,6 +84,19 @@ public class ExtUtils {
             return defaultValue;
         }
         return t;
+    }
+
+    public static Integer parseInt(String str) {
+
+        if (org.apache.commons.lang3.StringUtils.isBlank(str) || !NUMREG.matcher(str).matches()) {
+            return null;
+        }
+        return Integer.valueOf(str);
+    }
+
+    public static boolean isNum(String str) {
+
+        return (!org.apache.commons.lang3.StringUtils.isBlank(str) && NUMREG.matcher(str).matches());
     }
 
 }
