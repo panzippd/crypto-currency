@@ -1,6 +1,7 @@
 package com.crypto.currency.common.utils;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.regex.Pattern;
 
 /**
@@ -97,6 +98,16 @@ public class ExtUtils {
     public static boolean isNum(String str) {
 
         return (!org.apache.commons.lang3.StringUtils.isBlank(str) && NUMREG.matcher(str).matches());
+    }
+
+    public static boolean isSameSize(Collection a, Collection b) {
+
+        if (null == a && null == b) {
+            return true;
+        } else if (null == a || null == b) {
+            return false;
+        }
+        return a.size() == b.size();
     }
 
 }
