@@ -1,6 +1,10 @@
 package com.crypto.currency.common.utils;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
@@ -12,6 +16,30 @@ import java.util.regex.Pattern;
 public class ExtUtils {
 
     public static final Pattern NUMREG = Pattern.compile("^[+|-]?\\d+(.?\\d)*$");
+
+    /**
+     * Define frequently used time formatting
+     */
+    public enum LocalDateFormatEnum {
+
+        YYYY_MM_DD(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+
+        YYYY_MM_DD_HH_MM_SS(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+
+        YYYYMMDD(DateTimeFormatter.ofPattern("yyyyMMdd")),
+
+        YYYYMMDDHHMMSS(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+
+        final DateTimeFormatter dateFormatter;
+
+        LocalDateFormatEnum(DateTimeFormatter dateFormatter) {
+            this.dateFormatter = dateFormatter;
+        }
+
+        public DateTimeFormatter getDateFormatter() {
+            return dateFormatter;
+        }
+    }
 
     /**
      * if V is Null,return 0 , or defaultValue
@@ -110,4 +138,31 @@ public class ExtUtils {
         return a.size() == b.size();
     }
 
+    public static LocalDateTime nowUTC() {
+        return LocalDateTime.now(ZoneId.from(ZoneOffset.UTC));
+    }
+
+    /**
+     * @param index            Positive numbers are subtracted months, negative numbers are added months
+     * @param simpleDateFormat Output time format, year format must use yyyy
+     * @return
+     */
+    public static String minusMonths(int index, String simpleDateFormat) {
+        DateTimeFormatter fmt;
+        if (StringUtils.isEmpty(simpleDateFormat)) {
+            fmt = LocalDateFormatEnum.YYYY_MM_DD_HH_MM_SS.getDateFormatter();   //default
+        } else {
+            fmt = DateTimeFormatter.ofPattern(simpleDateFormat);
+        }
+        LocalDateTime date = ExtUtils.nowUTC().minusMonths(index);  //by UTC time
+        String monthTime = fmt.format(date);
+        return monthTime;
+    }
+
+    public static void main(String[] args) {
+        String startDateStr = ExtUtils.minusMonths(2, "yyyy-MM");
+        String endDateStr = ExtUtils.minusMonths(1, "yyyy-MM");
+        System.out.println(startDateStr);
+        System.out.println(endDateStr);
+    }
 }
