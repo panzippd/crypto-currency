@@ -1,5 +1,7 @@
 package com.crypto.currency.common.utils;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -157,6 +159,36 @@ public class ExtUtils {
         LocalDateTime date = ExtUtils.nowUTC().minusMonths(index);  //by UTC time
         String monthTime = fmt.format(date);
         return monthTime;
+    }
+
+    /**
+     * Splicing characters
+     *
+     * @param splitChar
+     * @param objects
+     * @return
+     */
+    public static String join(String splitChar, Object... objects) {
+
+        if (ArrayUtils.isEmpty(objects)) {
+            return org.apache.commons.lang3.StringUtils.EMPTY;
+        }
+        return org.apache.commons.lang3.StringUtils.join(objects, splitChar);
+    }
+
+    /**
+     * Splicing characters
+     *
+     * @param splitChar
+     * @param objects
+     * @return
+     */
+    public static String join(char splitChar, Object... objects) {
+
+        if (ArrayUtils.isEmpty(objects)) {
+            return org.apache.commons.lang3.StringUtils.EMPTY;
+        }
+        return org.apache.commons.lang3.StringUtils.join(objects, splitChar);
     }
 
     public static void main(String[] args) {
