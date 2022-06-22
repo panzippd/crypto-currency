@@ -1,5 +1,6 @@
 package com.crypto.currency.common.utils;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.math.BigDecimal;
@@ -8,6 +9,9 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 /**
@@ -196,5 +200,27 @@ public class ExtUtils {
         String endDateStr = ExtUtils.minusMonths(1, "yyyy-MM");
         System.out.println(startDateStr);
         System.out.println(endDateStr);
+    }
+
+    /**
+     * Map to  List
+     *
+     * @param map
+     * @param fun
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> toList(Map map, Function<Map.Entry, T> fun) {
+
+        if (CollectionUtils.isEmpty(map) || fun == null) {
+            return List.of();
+        }
+
+        List<T> data = Lists.newArrayListWithCapacity(map.size());
+        for (Object kv : map.entrySet()) {
+            Map.Entry entry = (Map.Entry)kv;
+            data.add(fun.apply(entry));
+        }
+        return data;
     }
 }
