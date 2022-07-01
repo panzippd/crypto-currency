@@ -1,6 +1,7 @@
 package com.crypto.currency.common.utils;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
@@ -222,5 +224,22 @@ public class ExtUtils {
             data.add(fun.apply(entry));
         }
         return data;
+    }
+
+    /**
+     * @param data
+     * @return
+     */
+    public static Set<String> toSet(String data) {
+
+        if (org.apache.commons.lang3.StringUtils.isBlank(data)) {
+            return Set.of();
+        }
+        String[] dataArray = org.apache.commons.lang3.StringUtils.split(data, '|');
+        Set<String> dataSet = Sets.newHashSetWithExpectedSize(dataArray.length);
+        for (String d : dataArray) {
+            dataSet.add(d);
+        }
+        return dataSet;
     }
 }
