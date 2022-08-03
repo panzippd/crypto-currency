@@ -197,13 +197,6 @@ public class ExtUtils {
         return org.apache.commons.lang3.StringUtils.join(objects, splitChar);
     }
 
-    public static void main(String[] args) {
-        String startDateStr = ExtUtils.minusMonths(2, "yyyy-MM");
-        String endDateStr = ExtUtils.minusMonths(1, "yyyy-MM");
-        System.out.println(startDateStr);
-        System.out.println(endDateStr);
-    }
-
     /**
      * Map to  List
      *
